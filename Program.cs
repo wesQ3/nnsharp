@@ -1,4 +1,4 @@
-﻿using NumSharp;
+using NumSharp;
 using System;
 using System.IO;
 
