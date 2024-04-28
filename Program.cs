@@ -28,6 +28,14 @@ var total = sizes.Aggregate((acc, i) => acc * i);
 var body = br.ReadBytes(total);
 var array = np.array(body);
 var shape = new Shape(sizes);
-array.reshape(shape);
-Console.WriteLine("new shape: "+string.Join(",", shape));
+array = array.reshape(shape);
+Console.WriteLine("new shape: "+string.Join(",", array.shape));
+var sample = array[1111];
+Console.WriteLine("sample shape: "+string.Join(",", sample.shape));
+Console.WriteLine($"sample length: {sample.size}");
+for (var i = 0; i < sample.shape[0]; i++) {
+    var line = sample[i].ToByteArray();
+    var str = string.Join(",", line.Select(b =>  $"{b,3}"));
+    Console.WriteLine($"{i,2}: {str}");
+}
 Console.WriteLine("done");
