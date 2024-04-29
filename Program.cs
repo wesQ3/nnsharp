@@ -13,9 +13,10 @@ Console.WriteLine("done");
 
 void testInput (NDArray target, int index) {
     var sample = target[index];
-    sample = sample.reshape([784]);
+    // reshape to columns for dot product
+    sample = sample.reshape([784]).reshape([-1,1]);
     var result = nn.FeedForward(sample);
-    Console.WriteLine(" 0: " + string.Join(",", result.ToByteArray()));
+    Console.WriteLine(" 0: " + string.Join(",", result.ToArray<Double>()));
 }
 
 void sampleArray (NDArray target, int index) {
