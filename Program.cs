@@ -6,7 +6,17 @@ var index = new Random().Next(trainImages.shape[0]);
 Console.WriteLine($"pick index: {index}");
 sampleArray(trainLabels, index);
 sampleArray(trainImages, index);
+
+var nn = new Network([784,15,10]);
+testInput(trainImages, index);
 Console.WriteLine("done");
+
+void testInput (NDArray target, int index) {
+    var sample = target[index];
+    sample = sample.reshape([784]);
+    var result = nn.FeedForward(sample);
+    Console.WriteLine(" 0: " + string.Join(",", result.ToByteArray()));
+}
 
 void sampleArray (NDArray target, int index) {
     var sample = target[index];
