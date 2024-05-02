@@ -9,6 +9,11 @@ sampleArray(trainImages, index);
 
 var nn = new Network([784,15,10]);
 testInput(trainImages, index);
+
+trainLabels = DatasetLoader.VectorizeLabels(trainLabels);
+var trainingInput = DatasetLoader.MergeDatasets(trainImages, trainLabels);
+
+nn.Train(trainingInput);
 Console.WriteLine("done");
 
 void testInput (NDArray target, int index) {

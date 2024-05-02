@@ -31,4 +31,30 @@ class DatasetLoader
         Console.WriteLine("new shape: " + string.Join(",", array.shape));
         return array;
     }
+
+    public static (NDArray, NDArray)[] MergeDatasets(NDArray a, NDArray b)
+    {
+        if (a.shape[0] != b.shape[0])
+            throw new ArgumentException("whats all this");
+
+        return Enumerable.Range(0, a.shape[0])
+            .Select(i => (a[i], b[i]))
+            .ToArray();
+    }
+
+    internal static NDArray VectorizeLabels(NDArray trainLabels)
+    {
+        List<NDArray> vectors = [];
+        foreach (var label in trainLabels) {
+            var z = np.zeros([10,1]);
+            byte unbox = (byte)label;
+            z[unbox] = 1.0;
+            vectors.Add(z);
+        }
+        return np.stack(vectors.ToArray()).reshape(new Shape(trainLabels.size, 10));
+        // NotSupported
+        // return trainLabels.GetData<int>()
+        //     .Select(val => { var z = np.zeros([10,1]); z[val] = 1.0; return z; })
+        //     .ToArray();
+    }
 }

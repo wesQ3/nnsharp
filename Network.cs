@@ -12,7 +12,7 @@ class Network {
         // weights connect between layers, so arrays of sizes(0,1) (1,2) etc
         var zipped = sizes.SkipLast(1).Zip(sizes.Skip(1));
         Weights = zipped
-            .Select(zip => np.random.randn(zip.Second, zip.First))
+            .Select(zip => np.random.randn([zip.Second, zip.First]))
             .ToArray();
         // 1st layer is for input so skip it
         Biases = sizes.Skip(1).Select(y => np.random.randn(y, 1)).ToArray();
@@ -24,6 +24,16 @@ class Network {
 
     public NDArray FeedForward(NDArray input) {
         return Biases.Zip(Weights)
-            .Aggregate(input, (a, zip) => Sigmoid(np.dot(zip.Second, a)+zip.First));
+            .Aggregate(input, (a, zip) =>
+            {
+                var weighted = np.dot(zip.Second, a);
+                var biased = weighted + zip.First;
+                return Sigmoid(biased);
+            });
+    }
+
+    public void Train((NDArray, NDArray)[] trainingInput)
+    {
+        throw new NotImplementedException();
     }
 }
