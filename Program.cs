@@ -13,7 +13,8 @@ testInput(trainImages, index);
 trainLabels = DatasetLoader.VectorizeLabels(trainLabels);
 var trainingInput = DatasetLoader.MergeDatasets(trainImages, trainLabels);
 
-nn.Train(trainingInput);
+nn.Train(trainingInput, 30, 10, 3.0f);
+testInput(trainImages, index);
 Console.WriteLine("done");
 
 void testInput (NDArray target, int index) {
