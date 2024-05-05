@@ -7,8 +7,10 @@ Console.WriteLine($"pick index: {index}");
 sampleArray(trainLabels, index);
 sampleArray(trainImages, index);
 
-var nn = new Network([784,15,10]);
+var imageSize = 28*28;
+var nn = new Network([imageSize,15,10]);
 testInput(trainImages, index);
+trainImages = trainImages.reshape([trainImages.shape[0], imageSize]);
 
 trainLabels = DatasetLoader.VectorizeLabels(trainLabels);
 var trainingInput = DatasetLoader.MergeDatasets(trainImages, trainLabels);
@@ -20,7 +22,7 @@ Console.WriteLine("done");
 void testInput (NDArray target, int index) {
     var sample = target[index];
     // reshape to columns for dot product
-    sample = sample.reshape([784]).reshape([-1,1]);
+    sample = sample.reshape([imageSize]).reshape([-1,1]);
     var result = nn.FeedForward(sample);
     Console.WriteLine(" 0: " + string.Join(",", result.ToArray<Double>()));
 }

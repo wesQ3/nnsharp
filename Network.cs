@@ -22,6 +22,11 @@ class Network {
         return 1/(1 + np.exp(-z));
     }
 
+    public static NDArray SigmoidPrime(NDArray z) {
+        var sigmoid = Sigmoid(z);
+        return sigmoid * (1-sigmoid);
+    }
+
     public NDArray FeedForward(NDArray input) {
         return Biases.Zip(Weights)
             .Aggregate(input, (a, zip) =>
@@ -68,6 +73,38 @@ class Network {
 
     internal (NDArray[], NDArray[]) Backpropagate(NDArray x, NDArray y)
     {
-        throw new NotImplementedException();
+        var nablaBias = Biases.Select(b => np.zeros(b.shape)).ToArray();
+        var nablaWeight = Weights.Select(w => np.zeros(w.shape)).ToArray();
+
+        var activation = x;
+        List<NDArray> activations = [x];
+        List<NDArray> zs = [];
+
+        // feed forward
+        foreach (var (bias, weight) in nablaBias.Zip(nablaWeight)) {
+            var z = np.dot(weight, activation) + bias;
+            zs.Add(z);
+            activation = Sigmoid(z);
+            activations.Add(activation);
+        }
+
+        // back prop
+        var delta = CostDerivative(activations[^1], y) * SigmoidPrime(zs[^1]);
+        nablaBias[^1] = delta;
+        nablaWeight[^1] = np.dot(delta, activations[^2].transpose());
+
+        for (int l = 2; l < LayerCount; l++) {
+            var z = zs[^l];
+            var sp = SigmoidPrime(z);
+            delta = np.dot(Weights[^(l-1)].transpose(), delta) * sp;
+            nablaBias[^l] = delta;
+            nablaWeight[^l] = np.dot(delta, activations[^(l+1)].transpose());
+        }
+
+        return (nablaBias, nablaWeight);
+    }
+
+    internal static NDArray CostDerivative(NDArray output_activations, NDArray y) {
+        return output_activations - y;
     }
 }
