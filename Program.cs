@@ -1,4 +1,5 @@
 using NumSharp;
+using System.Text.Json;
 
 var trainLabels = DatasetLoader.LoadIdx("data/train-labels-idx1-ubyte");
 var trainImages = DatasetLoader.LoadIdx("data/train-images-idx3-ubyte");
@@ -16,6 +17,7 @@ trainLabels = DatasetLoader.VectorizeLabels(trainLabels);
 var trainingInput = DatasetLoader.MergeDatasets(trainImages, trainLabels);
 
 nn.Train(trainingInput, 30, 10, 3.0f);
+writeNetwork(nn);
 testInput(trainImages, index);
 Console.WriteLine("done");
 
@@ -42,4 +44,10 @@ void sampleArray (NDArray target, int index) {
             Console.WriteLine($"{i,2}: {str}");
         }
     }
+}
+
+void writeNetwork (Network network) {
+    var dt = DateTime.UtcNow.ToString("s");
+    File.WriteAllText($"network-{dt}.json",
+         JsonSerializer.Serialize(network.ToJson()));
 }

@@ -107,4 +107,13 @@ class Network {
     internal static NDArray CostDerivative(NDArray output_activations, NDArray y) {
         return output_activations - y;
     }
+
+    public object ToJson () {
+        return new {
+            LayerCount = LayerCount,
+            Sizes = Sizes,
+            Weights = Weights.Select(w => w.ToArray<double>()).ToArray(),
+            Biases = Biases.Select(b => b.ToArray<double>()).ToArray(),
+        };
+    }
 }
