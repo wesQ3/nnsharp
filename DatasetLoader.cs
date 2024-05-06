@@ -38,7 +38,7 @@ class DatasetLoader
             throw new ArgumentException("whats all this");
 
         return Enumerable.Range(0, a.shape[0])
-            .Select(i => (a[i], b[i]))
+            .Select(i => (a[i].reshape([-1, 1]), b[i].reshape([-1,1])))
             .ToArray();
     }
 

@@ -22,6 +22,7 @@ Console.WriteLine("done");
 void testInput (NDArray target, int index) {
     var sample = target[index];
     // reshape to columns for dot product
+    // shape (imageSize, 1)
     sample = sample.reshape([imageSize]).reshape([-1,1]);
     var result = nn.FeedForward(sample);
     Console.WriteLine(" 0: " + string.Join(",", result.ToArray<Double>()));
