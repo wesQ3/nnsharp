@@ -116,4 +116,15 @@ class Network {
             Biases = Biases.Select(b => b.ToArray<double>()).ToArray(),
         };
     }
+
+    public Network (double[][] weights, double[][] biases) {
+        Weights = weights.Select(w => NDArray.FromMultiDimArray<double>(w)).ToArray();
+        Biases = biases.Select(b => NDArray.FromMultiDimArray<double>(b)).ToArray();
+        if (Weights.Length != Biases.Length)
+            throw new ArgumentException("array lengths mismatch");
+        LayerCount = Weights.Length + 1;
+        Sizes = Weights.Select(w => w.Shape.Dimensions)
+            .Aggregate((acc, cur) => [.. acc, cur[1]]);
+
+    }
 }
