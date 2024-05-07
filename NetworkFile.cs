@@ -8,12 +8,18 @@ class NetworkFile {
     }
 
     public static Network Read (string filename) {
+        Console.WriteLine($"read network {filename}");
         var fs = File.OpenRead(filename);
         return JsonSerializer.Deserialize<Network>(fs)!;
     }
 
     public static Network ReadLatest () {
-        throw new NotImplementedException();
-    }
+        var dir = Directory.GetCurrentDirectory();
+        var file = Directory.EnumerateFiles(dir, "network-*.json")
+            .OrderByDescending(name => name)
+            .FirstOrDefault()
+            ?? throw new FileNotFoundException("no network files yet. train() first");
 
+        return Read(file);
+    }
 }

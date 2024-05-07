@@ -1,26 +1,40 @@
 using NumSharp;
+const int imageSize = 28*28;
 
-var trainLabels = DatasetLoader.LoadIdx("data/train-labels-idx1-ubyte");
-var trainImages = DatasetLoader.LoadIdx("data/train-images-idx3-ubyte");
-var index = new Random().Next(trainImages.shape[0]);
-Console.WriteLine($"pick index: {index}");
-sampleArray(trainLabels, index);
-sampleArray(trainImages, index);
+latest();
 
-var imageSize = 28*28;
-var nn = new Network([imageSize,15,10]);
-testInput(trainImages, index);
-trainImages = trainImages.reshape([trainImages.shape[0], imageSize]);
+void latest() {
+    var trainLabels = DatasetLoader.LoadIdx("data/train-labels-idx1-ubyte");
+    var trainImages = DatasetLoader.LoadIdx("data/train-images-idx3-ubyte");
+    var index = new Random().Next(trainImages.shape[0]);
+    Console.WriteLine($"pick index: {index}");
+    sampleArray(trainLabels, index);
+    var nn = NetworkFile.ReadLatest();
+    testInput(trainImages, index, nn);
+    Console.WriteLine("done");
+}
 
-trainLabels = DatasetLoader.VectorizeLabels(trainLabels);
-var trainingInput = DatasetLoader.MergeDatasets(trainImages, trainLabels);
+void train() {
+    var trainLabels = DatasetLoader.LoadIdx("data/train-labels-idx1-ubyte");
+    var trainImages = DatasetLoader.LoadIdx("data/train-images-idx3-ubyte");
+    var index = new Random().Next(trainImages.shape[0]);
+    Console.WriteLine($"pick index: {index}");
+    sampleArray(trainLabels, index);
 
-nn.Train(trainingInput, 30, 10, 3.0f);
-writeNetwork(nn);
-testInput(trainImages, index);
-Console.WriteLine("done");
+    var nn = new Network([imageSize,15,10]);
+    testInput(trainImages, index, nn);
+    trainImages = trainImages.reshape([trainImages.shape[0], imageSize]);
 
-void testInput (NDArray target, int index) {
+    trainLabels = DatasetLoader.VectorizeLabels(trainLabels);
+    var trainingInput = DatasetLoader.MergeDatasets(trainImages, trainLabels);
+
+    nn.Train(trainingInput, 30, 10, 3.0f);
+    NetworkFile.Write(nn);
+    testInput(trainImages, index, nn);
+    Console.WriteLine("done");
+}
+
+void testInput (NDArray target, int index, Network nn) {
     var sample = target[index];
     // reshape to columns for dot product
     // shape (imageSize, 1)
