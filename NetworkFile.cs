@@ -10,7 +10,8 @@ class NetworkFile {
     public static Network Read (string filename) {
         Console.WriteLine($"read network {filename}");
         var fs = File.OpenRead(filename);
-        return JsonSerializer.Deserialize<Network>(fs)!;
+        var nd = JsonSerializer.Deserialize<NetworkData>(fs)!;
+        return new Network(nd.Weights, nd.Biases);
     }
 
     public static Network ReadLatest () {
@@ -22,4 +23,9 @@ class NetworkFile {
 
         return Read(file);
     }
+}
+
+class NetworkData {
+    public double[][] Weights {get; set;}
+    public double[][] Biases {get; set;}
 }
