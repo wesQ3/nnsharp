@@ -1,7 +1,19 @@
 using NumSharp;
 const int imageSize = 28*28;
 
-latest();
+roundtrip();
+
+void roundtrip () {
+    var outNet = new Network([5,3,2]);
+    NetworkFile.Write(outNet, "roundtrip.json");
+    var inNet = NetworkFile.Read("roundtrip.json");
+    Console.WriteLine($"{outNet == inNet}");
+    var testInput = np.random.randn([5, 1]);
+    var preOutput = outNet.FeedForward(testInput);
+    var postOutput = inNet.FeedForward(testInput);
+    Console.WriteLine($"{preOutput == postOutput}");
+
+}
 
 void latest() {
     var trainLabels = DatasetLoader.LoadIdx("data/train-labels-idx1-ubyte");

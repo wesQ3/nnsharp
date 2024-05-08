@@ -117,14 +117,20 @@ class Network {
         };
     }
 
-    public Network (double[][] weights, double[][] biases) {
-        Weights = weights.Select(w => NDArray.FromMultiDimArray<double>(w)).ToArray();
-        Biases = biases.Select(b => NDArray.FromMultiDimArray<double>(b)).ToArray();
+    public Network (int[] sizes, double[][] weights, double[][] biases) {
+        Sizes = sizes;
+        LayerCount = sizes.Length;
+        var weightShapes = sizes.SkipLast(1).Zip(sizes.Skip(1)).ToArray();
+        Weights = weights.Select((allWeights, i) => {
+            var (x, y) = weightShapes[i];
+            return NDArray.FromMultiDimArray<double>(allWeights).reshape([y, x]);
+        }).ToArray();
+        Biases = biases.Select(thawNDA).ToArray();
         if (Weights.Length != Biases.Length)
             throw new ArgumentException("array lengths mismatch");
-        LayerCount = Weights.Length + 1;
-        Sizes = Weights.Select(w => w.Shape.Dimensions)
-            .Aggregate((acc, cur) => [.. acc, cur[1]]);
+    }
 
+    internal NDArray thawNDA (double[] bundle) {
+        return NDArray.FromMultiDimArray<double>(bundle).reshape([-1,1]);
     }
 }
