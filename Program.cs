@@ -1,7 +1,7 @@
 using NumSharp;
 const int imageSize = 28*28;
 
-roundtrip();
+latest();
 
 void roundtrip () {
     var outNet = new Network([5,3,2]);
@@ -12,7 +12,6 @@ void roundtrip () {
     var preOutput = outNet.FeedForward(testInput);
     var postOutput = inNet.FeedForward(testInput);
     Console.WriteLine($"{preOutput == postOutput}");
-
 }
 
 void latest() {
@@ -62,11 +61,12 @@ void sampleArray (NDArray target, int index) {
     if (np.isscalar(sample)) {
         Console.WriteLine(" 0: " + string.Join(",", sample.ToByteArray()));
     } else {
+        string map = " .'`^\",:;Il!i><~+_-?][}{1)(|\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$";
         Console.WriteLine("sample shape: " + string.Join(",", sample.shape));
         for (var i = 0; i < sample.shape[0]; i++)
         {
             var line = sample[i].ToByteArray();
-            var str = string.Join(",", line.Select(b => $"{b,3}"));
+            var str = string.Join(" ", line.Select(b => map[b * (map.Length - 1) / 255]));
             Console.WriteLine($"{i,2}: {str}");
         }
     }
