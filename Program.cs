@@ -21,6 +21,7 @@ void latest() {
     var index = new Random().Next(trainImages.shape[0]);
     Console.WriteLine($"pick index: {index}");
     sampleArray(trainLabels, index);
+    sampleArray(trainImages, index);
     var nn = NetworkFile.ReadLatest();
     testInput(trainImages, index, nn);
     Console.WriteLine("done");
