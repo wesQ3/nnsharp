@@ -87,7 +87,7 @@ class Network
         List<NDArray> zs = [];
 
         // feed forward
-        foreach (var (bias, weight) in nablaBias.Zip(nablaWeight))
+        foreach (var (bias, weight) in Biases.Zip(Weights))
         {
             var z = np.dot(weight, activation) + bias;
             zs.Add(z);
