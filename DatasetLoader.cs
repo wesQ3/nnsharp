@@ -38,15 +38,16 @@ class DatasetLoader
             throw new ArgumentException("whats all this");
 
         return Enumerable.Range(0, a.shape[0])
-            .Select(i => (a[i].reshape([-1, 1]), b[i].reshape([-1,1])))
+            .Select(i => (a[i].reshape([-1, 1]), b[i].reshape([-1, 1])))
             .ToArray();
     }
 
     internal static NDArray VectorizeLabels(NDArray trainLabels)
     {
         List<NDArray> vectors = [];
-        foreach (var label in trainLabels) {
-            var z = np.zeros([10,1]);
+        foreach (var label in trainLabels)
+        {
+            var z = np.zeros([10, 1]);
             byte unbox = (byte)label;
             z[unbox] = 1.0;
             vectors.Add(z);

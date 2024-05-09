@@ -1,6 +1,7 @@
 using NumSharp;
 
-class Network {
+class Network
+{
     public int LayerCount;
     public int[] Sizes;
     public NDArray[] Weights;
@@ -18,16 +19,19 @@ class Network {
         Biases = sizes.Skip(1).Select(y => np.random.randn(y, 1)).ToArray();
     }
 
-    public static NDArray Sigmoid(NDArray z) {
-        return 1/(1 + np.exp(-z));
+    public static NDArray Sigmoid(NDArray z)
+    {
+        return 1 / (1 + np.exp(-z));
     }
 
-    public static NDArray SigmoidPrime(NDArray z) {
+    public static NDArray SigmoidPrime(NDArray z)
+    {
         var sigmoid = Sigmoid(z);
-        return sigmoid * (1-sigmoid);
+        return sigmoid * (1 - sigmoid);
     }
 
-    public NDArray FeedForward(NDArray input) {
+    public NDArray FeedForward(NDArray input)
+    {
         return Biases.Zip(Weights)
             .Aggregate(input, (a, zip) =>
             {
@@ -42,7 +46,8 @@ class Network {
         Console.WriteLine($"begin training.");
         Console.WriteLine($"  {epochs}x, batches of {batchSize} * {trainingRate}");
         var rand = new Random();
-        for (int i = 0; i < epochs; i++) {
+        for (int i = 0; i < epochs; i++)
+        {
             rand.Shuffle(trainingInput);
             trainingInput.Chunk(batchSize).ToList()
                 .ForEach(b => Update(b, trainingRate));
@@ -56,7 +61,8 @@ class Network {
         var nablaBias = Biases.Select(b => np.zeros(b.shape)).ToArray();
         var nablaWeight = Weights.Select(w => np.zeros(w.shape)).ToArray();
 
-        foreach (var pair in batch) {
+        foreach (var pair in batch)
+        {
             var (deltaBias, deltaWeight) = Backpropagate(pair.x, pair.y);
             nablaBias = nablaBias.Zip(deltaBias)
                 .Select(a => a.First + a.Second).ToArray();
@@ -64,10 +70,10 @@ class Network {
                 .Select(a => a.First + a.Second).ToArray();
         }
         Biases = Biases.Zip(nablaBias)
-            .Select(a => a.First - (trainingRate / batch.Length) * a.Second)
+            .Select(a => a.First - trainingRate / batch.Length * a.Second)
             .ToArray();
         Weights = Weights.Zip(nablaWeight)
-            .Select(a => a.First - (trainingRate / batch.Length) * a.Second)
+            .Select(a => a.First - trainingRate / batch.Length * a.Second)
             .ToArray();
     }
 
@@ -81,7 +87,8 @@ class Network {
         List<NDArray> zs = [];
 
         // feed forward
-        foreach (var (bias, weight) in nablaBias.Zip(nablaWeight)) {
+        foreach (var (bias, weight) in nablaBias.Zip(nablaWeight))
+        {
             var z = np.dot(weight, activation) + bias;
             zs.Add(z);
             activation = Sigmoid(z);
@@ -93,23 +100,27 @@ class Network {
         nablaBias[^1] = delta;
         nablaWeight[^1] = np.dot(delta, activations[^2].transpose());
 
-        for (int l = 2; l < LayerCount; l++) {
+        for (int l = 2; l < LayerCount; l++)
+        {
             var z = zs[^l];
             var sp = SigmoidPrime(z);
-            delta = np.dot(Weights[^(l-1)].transpose(), delta) * sp;
+            delta = np.dot(Weights[^(l - 1)].transpose(), delta) * sp;
             nablaBias[^l] = delta;
-            nablaWeight[^l] = np.dot(delta, activations[^(l+1)].transpose());
+            nablaWeight[^l] = np.dot(delta, activations[^(l + 1)].transpose());
         }
 
         return (nablaBias, nablaWeight);
     }
 
-    internal static NDArray CostDerivative(NDArray output_activations, NDArray y) {
+    internal static NDArray CostDerivative(NDArray output_activations, NDArray y)
+    {
         return output_activations - y;
     }
 
-    public object ToJson () {
-        return new {
+    public object ToJson()
+    {
+        return new
+        {
             LayerCount = LayerCount,
             Sizes = Sizes,
             Weights = Weights.Select(w => w.ToArray<double>()).ToArray(),
@@ -117,16 +128,18 @@ class Network {
         };
     }
 
-    public Network (int[] sizes, double[][] weights, double[][] biases) {
+    public Network(int[] sizes, double[][] weights, double[][] biases)
+    {
         Sizes = sizes;
         LayerCount = sizes.Length;
         var weightShapes = sizes.SkipLast(1).Zip(sizes.Skip(1));
-        Weights = weights.Zip(weightShapes).Select(w => {
+        Weights = weights.Zip(weightShapes).Select(w =>
+        {
             var (x, y) = w.Second;
             return NDArray.FromMultiDimArray<double>(w.First).reshape([y, x]);
         }).ToArray();
         Biases = biases.Select(
-            b => NDArray.FromMultiDimArray<double>(b).reshape([-1,1])
+            b => NDArray.FromMultiDimArray<double>(b).reshape([-1, 1])
         ).ToArray();
         if (Weights.Length != Biases.Length)
             throw new ArgumentException("array lengths mismatch");

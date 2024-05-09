@@ -1,10 +1,11 @@
 using NumSharp;
-const int imageSize = 28*28;
+const int imageSize = 28 * 28;
 
 latest();
 
-void roundtrip () {
-    var outNet = new Network([5,3,2]);
+void roundtrip()
+{
+    var outNet = new Network([5, 3, 2]);
     NetworkFile.Write(outNet, "roundtrip.json");
     var inNet = NetworkFile.Read("roundtrip.json");
     Console.WriteLine($"{outNet == inNet}");
@@ -14,7 +15,8 @@ void roundtrip () {
     Console.WriteLine($"{preOutput == postOutput}");
 }
 
-void latest() {
+void latest()
+{
     var trainLabels = DatasetLoader.LoadIdx("data/train-labels-idx1-ubyte");
     var trainImages = DatasetLoader.LoadIdx("data/train-images-idx3-ubyte");
     var index = new Random().Next(trainImages.shape[0]);
@@ -26,14 +28,15 @@ void latest() {
     Console.WriteLine("done");
 }
 
-void train() {
+void train()
+{
     var trainLabels = DatasetLoader.LoadIdx("data/train-labels-idx1-ubyte");
     var trainImages = DatasetLoader.LoadIdx("data/train-images-idx3-ubyte");
     var index = new Random().Next(trainImages.shape[0]);
     Console.WriteLine($"pick index: {index}");
     sampleArray(trainLabels, index);
 
-    var nn = new Network([imageSize,15,10]);
+    var nn = new Network([imageSize, 15, 10]);
     testInput(trainImages, index, nn);
     trainImages = trainImages.reshape([trainImages.shape[0], imageSize]);
 
@@ -46,21 +49,26 @@ void train() {
     Console.WriteLine("done");
 }
 
-void testInput (NDArray target, int index, Network nn) {
+void testInput(NDArray target, int index, Network nn)
+{
     var sample = target[index];
     // reshape to columns for dot product
     // shape (imageSize, 1)
-    sample = sample.reshape([imageSize]).reshape([-1,1]);
+    sample = sample.reshape([imageSize]).reshape([-1, 1]);
     var result = nn.FeedForward(sample);
     Console.WriteLine(" 0: " + string.Join(",", result.ToArray<Double>()));
 }
 
-void sampleArray (NDArray target, int index) {
+void sampleArray(NDArray target, int index)
+{
     var sample = target[index];
     Console.WriteLine($"sample length: {sample.size}");
-    if (np.isscalar(sample)) {
+    if (np.isscalar(sample))
+    {
         Console.WriteLine(" 0: " + string.Join(",", sample.ToByteArray()));
-    } else {
+    }
+    else
+    {
         string map = " .'`^\",:;Il!i><~+_-?][}{1)(|\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$";
         Console.WriteLine("sample shape: " + string.Join(",", sample.shape));
         for (var i = 0; i < sample.shape[0]; i++)
