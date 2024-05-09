@@ -1,7 +1,7 @@
 using NumSharp;
 const int imageSize = 28 * 28;
 
-latest();
+train();
 
 void roundtrip()
 {
@@ -38,12 +38,12 @@ void train()
 
     var nn = new Network([imageSize, 15, 10]);
     testInput(trainImages, index, nn);
-    trainImages = trainImages.reshape([trainImages.shape[0], imageSize]);
+    trainImages = trainImages.reshape([trainImages.shape[0], imageSize, 1]);
 
     trainLabels = DatasetLoader.VectorizeLabels(trainLabels);
     var trainingInput = DatasetLoader.MergeDatasets(trainImages, trainLabels);
 
-    nn.Train(trainingInput, 30, 10, 3.0f);
+    nn.Train(trainingInput, 30, 10, 3.0d);
     NetworkFile.Write(nn);
     testInput(trainImages, index, nn);
     Console.WriteLine("done");
@@ -54,7 +54,7 @@ void testInput(NDArray target, int index, Network nn)
     var sample = target[index];
     // reshape to columns for dot product
     // shape (imageSize, 1)
-    sample = sample.reshape([imageSize]).reshape([-1, 1]);
+    sample = sample.reshape([imageSize, 1]);
     var result = nn.FeedForward(sample);
     Console.WriteLine(" 0: " + string.Join(",", result.ToArray<Double>()));
 }

@@ -41,22 +41,22 @@ class Network
             });
     }
 
-    public void Train((NDArray, NDArray)[] trainingInput, int epochs, int batchSize, float trainingRate)
+    public void Train((NDArray, NDArray)[] trainingInput, int epochs, int batchSize, double trainingRate)
     {
-        Console.WriteLine($"begin training.");
-        Console.WriteLine($"  {epochs}x, batches of {batchSize} * {trainingRate}");
+        Log("begin training.");
+        Log($"  {epochs}x, batches of {batchSize} @ {trainingRate}");
         var rand = new Random();
-        for (int i = 0; i < epochs; i++)
+        for (int i = 1; i <= epochs; i++)
         {
             rand.Shuffle(trainingInput);
             trainingInput.Chunk(batchSize).ToList()
                 .ForEach(b => Update(b, trainingRate));
 
-            Console.WriteLine($"epoch {i,2}/{epochs}: done");
+            Log($"epoch {i,2}/{epochs}: done");
         }
     }
 
-    internal void Update((NDArray x, NDArray y)[] batch, float trainingRate)
+    internal void Update((NDArray x, NDArray y)[] batch, double trainingRate)
     {
         var nablaBias = Biases.Select(b => np.zeros(b.shape)).ToArray();
         var nablaWeight = Weights.Select(w => np.zeros(w.shape)).ToArray();
@@ -143,5 +143,10 @@ class Network
         ).ToArray();
         if (Weights.Length != Biases.Length)
             throw new ArgumentException("array lengths mismatch");
+    }
+    public static void Log(string s)
+    {
+        var dt = DateTime.Now.ToString("HH:mm:ss");
+        Console.WriteLine($"{dt} {s}");
     }
 }
