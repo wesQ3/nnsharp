@@ -1,9 +1,32 @@
 using NumSharp;
 const int imageSize = 28 * 28;
 
-train();
+if (args.Contains("--network"))
+{
+    var index = Array.IndexOf(args, "--network");
+    if (index == -1 || index - 1 == args.Length)
+        Bail();
 
-void roundtrip()
+    var filename = args[index + 1];
+    var nn = NetworkFile.Read(filename);
+    Read(nn);
+}
+else if (args.Contains("--train"))
+    Train();
+else if (args.Contains("--latest"))
+    ReadLatest();
+else if (args.Contains("--roundtrip"))
+    Roundtrip();
+else
+    ReadLatest();
+
+void Bail()
+{
+    Console.WriteLine("usage: --train | --latest | --network <file>");
+    Environment.Exit(1);
+}
+
+void Roundtrip()
 {
     var outNet = new Network([5, 3, 2]);
     NetworkFile.Write(outNet, "roundtrip.json");
@@ -15,7 +38,7 @@ void roundtrip()
     Console.WriteLine($"{preOutput == postOutput}");
 }
 
-void latest()
+void Read(Network nn)
 {
     var trainLabels = DatasetLoader.LoadIdx("data/train-labels-idx1-ubyte");
     var trainImages = DatasetLoader.LoadIdx("data/train-images-idx3-ubyte");
@@ -23,12 +46,17 @@ void latest()
     Console.WriteLine($"pick index: {index}");
     sampleArray(trainLabels, index);
     sampleArray(trainImages, index);
-    var nn = NetworkFile.ReadLatest();
     testInput(trainImages, index, nn);
     Console.WriteLine("done");
 }
 
-void train()
+void ReadLatest()
+{
+    var nn = NetworkFile.ReadLatest();
+    Read(nn);
+}
+
+void Train()
 {
     var trainLabels = DatasetLoader.LoadIdx("data/train-labels-idx1-ubyte");
     var trainImages = DatasetLoader.LoadIdx("data/train-images-idx3-ubyte");
