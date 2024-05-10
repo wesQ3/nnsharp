@@ -84,7 +84,22 @@ void testInput(NDArray target, int index, Network nn)
     // shape (imageSize, 1)
     sample = sample.reshape([imageSize, 1]);
     var result = nn.FeedForward(sample);
-    Console.WriteLine(" 0: " + string.Join(",", result.ToArray<Double>()));
+
+    var outputs = result.ToArray<double>()
+        .Select((value, index) => (index, value))
+        .OrderByDescending(x => x.value)
+        .ToList();
+
+    Console.WriteLine($"feedforward results:");
+    foreach (var (i, value) in outputs)
+        Console.WriteLine($"  {i}: {value:F4}");
+
+    // a rough confidence, difference of our answer from rest
+    var avg = outputs.Skip(1)
+        .Select(i => i.value).Aggregate((a, i) => a + i)
+        / (outputs.Count - 1);
+    var confidence = outputs[0].value - avg;
+    Console.WriteLine($"  Confidence: {confidence:F4}");
 }
 
 void sampleArray(NDArray target, int index)
