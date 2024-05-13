@@ -21,13 +21,13 @@ class Network
 
     public static NDArray Sigmoid(NDArray z)
     {
-        return 1 / (1 + np.exp(-z));
+        return 1.0d / (1.0d + np.exp(-z));
     }
 
     public static NDArray SigmoidPrime(NDArray z)
     {
         var sigmoid = Sigmoid(z);
-        return sigmoid * (1 - sigmoid);
+        return sigmoid * (1.0d - sigmoid);
     }
 
     public NDArray FeedForward(NDArray input)

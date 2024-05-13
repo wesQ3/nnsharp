@@ -60,6 +60,7 @@ void Train()
 {
     var trainLabels = DatasetLoader.LoadIdx("data/train-labels-idx1-ubyte");
     var trainImages = DatasetLoader.LoadIdx("data/train-images-idx3-ubyte");
+    trainImages /= 256.0d; // normalize to 0..1
     var index = new Random().Next(trainImages.shape[0]);
     Console.WriteLine($"pick index: {index}");
     sampleArray(trainLabels, index);
