@@ -29,8 +29,9 @@ const { useState, useEffect, useCallback, useMemo } = React;
 // It is used by many components, along with...
 const visibleNeurons = [
   [0, 1, 2, 3, 4, 5, null, null, 778, 779, 780, 781, 782, 783],
-  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
-  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+  // [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+  // [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], // my model is 784,15,10
   [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
 ];
 
@@ -228,7 +229,7 @@ function NeuronConnections({ selectedNeuron, animating, instant }) {
       prevLayer.forEach((prevNeuronId, prevNeuronIndex) => {
         if (prevNeuronId === null) return;
 
-         console.log("current weights", prevLayerIndex, weights[prevLayerIndex]);
+         // console.log("current weights", prevLayerIndex, weights[prevLayerIndex]);
         const weight = weights[prevLayerIndex][neuronId][prevNeuronId];
 
         const layerIsHighlighted = selectedNeuron?.layerIndex === layerIndex;
@@ -359,9 +360,12 @@ function Neurons({
 }
 
 function WinningOutputNeuronBox({ neurons, animating, instant }) {
-  const winningValue = Math.max(...neurons[3]);
-  const winningNeuron = neurons[3].indexOf(winningValue);
-  const position = getNeuronPosition(3, winningNeuron);
+   console.log('start winoutput', neurons, animating, instant);
+   const resultIx = neurons.length - 1;
+  const winningValue = Math.max(...neurons[resultIx]);
+  const winningNeuron = neurons[resultIx].indexOf(winningValue);
+  const position = getNeuronPosition(resultIx, winningNeuron);
+   console.log('win output',winningValue, winningNeuron, position);
   return (
     <rect
       x={position.x - 18}
