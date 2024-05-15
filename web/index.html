@@ -12,11 +12,12 @@
 </head>
 <body style="background: black;">
     <div id="root"></div>
+    <div id="attrib" style="font-family:sans-serif;"><a href="https://www.3blue1brown.com/lessons/neural-networks">Visualizer from 3b1b, learn more here</a></div>
     <script>
       var data = null;
 
       var xhr = new XMLHttpRequest();
-      xhr.open('GET', '/nn-30epoch.json', false); // 'false' makes the request synchronous
+      xhr.open('GET', '/web/nn-30epoch.json', false); // synchronous req
       try {
         xhr.send();
 
