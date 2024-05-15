@@ -21,11 +21,13 @@
         xhr.send();
 
         if (xhr.status === 200) {
-          data = JSON.parse(xhr.responseText);
-                  console.log(convertNetwork(data));
-          window.weights = data.Weights;
-          window.biases = data.Biases;
-          window.sizes = data.Sizes;
+            data = JSON.parse(xhr.responseText);
+            data = convertNetwork(data);
+            Object.assign(window, {
+               weights: data.weights,
+               biases: data.biases,
+               sizes: data.sizes
+            });
         } else {
           console.error('Failed to load data:', xhr.statusText);
         }

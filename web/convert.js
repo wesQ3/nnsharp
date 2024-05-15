@@ -6,7 +6,9 @@ function convertNetwork (nn) {
    }
    console.log(newWeights);
    return {
-      weights: newWeights
+      weights: newWeights,
+      biases: nn.Biases,
+      sizes: nn.Sizes,
    };
 }
 
