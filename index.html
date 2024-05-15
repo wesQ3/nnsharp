@@ -7,8 +7,8 @@
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <!-- Load Babel for JSX parsing -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="/web/three.js"></script>
-    <script src="/web/convert.js"></script>
+    <script src="web/three.js"></script>
+    <script src="web/convert.js"></script>
 </head>
 <body style="background: black;">
     <div id="root"></div>
@@ -17,7 +17,7 @@
       var data = null;
 
       var xhr = new XMLHttpRequest();
-      xhr.open('GET', '/web/nn-30epoch.json', false); // synchronous req
+      xhr.open('GET', 'web/nn-30epoch.json', false); // synchronous req
       try {
         xhr.send();
 
@@ -36,7 +36,7 @@
         console.error('Exception during sync xhr:', err);
       }
     </script>
-    <script type="text/babel" src="/web/index.js"></script>
+    <script type="text/babel" src="web/index.js"></script>
     <script type="text/babel">
       function MyApp() {
          return NeuralNetworkInteractive(true);
