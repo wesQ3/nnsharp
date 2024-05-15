@@ -8,6 +8,7 @@
     <!-- Load Babel for JSX parsing -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="/web/data.js"></script>
+    <script src="/web/convert.js"></script>
 </head>
 <body style="background: black;">
     <div id="root"></div>
@@ -21,9 +22,10 @@
 
         if (xhr.status === 200) {
           data = JSON.parse(xhr.responseText);
-                  console.log(data);
+                  console.log(convertNetwork(data));
           window.weights = data.Weights;
           window.biases = data.Biases;
+          window.sizes = data.Sizes;
         } else {
           console.error('Failed to load data:', xhr.statusText);
         }
